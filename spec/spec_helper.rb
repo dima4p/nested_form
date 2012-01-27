@@ -1,39 +1,16 @@
-require 'rubygems'
-require 'spec'
-require 'active_support'
-require 'active_record'
-require 'action_controller'
-require 'action_view'
-require File.dirname(__FILE__) + '/../lib/nested_form.rb'
+# Configure Rails Environment
+ENV["RAILS_ENV"] = "test"
 
-Spec::Runner.configure do |config|
-  config.mock_with :rr
+require File.expand_path("../dummy/config/environment.rb",  __FILE__)
+require 'rspec/rails'
+require 'capybara/rspec'
+
+Capybara.javascript_driver = :selenium
+RSpec.configure do |config|
+  config.mock_with :mocha
 end
 
-class TablelessModel < ActiveRecord::Base
-  def self.columns() @columns ||= []; end
- 
-  def self.column(name, sql_type = nil, default = nil, null = true)
-    columns << ActiveRecord::ConnectionAdapters::Column.new(name.to_s, default, sql_type.to_s, null)
-  end
-  
-  def self.quoted_table_name
-    name.pluralize.underscore
-  end
-  
-  def quoted_id
-    "0"
-  end
-end
+Rails.backtrace_cleaner.remove_silencers!
 
-class Project < TablelessModel
-  column :name, :string
-  has_many :tasks
-  accepts_nested_attributes_for :tasks
-end
-
-class Task < TablelessModel
-  column :project_id, :integer
-  column :name, :string
-  belongs_to :project
-end
+# Load support files
+Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each { |f| require f }
