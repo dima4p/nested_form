@@ -79,7 +79,7 @@ module NestedForm
     end
 
     def fields_for_nested_model(name, object, options, block)
-      tag = options[:enclosing_tag].to_s || 'div'
+      tag = (options[:enclosing_tag] || 'div').to_s
       output = %Q[<#{tag} class="fields">].html_safe
       output << super
       output.safe_concat(%Q(</#{tag}>))
