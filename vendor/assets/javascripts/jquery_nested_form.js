@@ -48,7 +48,7 @@ jQuery(function($) {
       return false;
     },
     insertFields: function(content, assoc, link) {
-      return $(content).insertBefore(link);
+      return $(content).insertBefore($(link).closest('.add_link'));
     },
     removeFields: function(e) {
       var link = e.currentTarget;

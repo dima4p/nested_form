@@ -4,7 +4,12 @@ module NestedForm
     #
     #   f.link_to_add("Add Task", :tasks)
     #
-    # You can pass HTML options in a hash at the end and a block for the content.
+    # If you want other tag (not <div>) to be used to hold the content of the
+    # inserted partial, say, <tr>, use option :enclosing_tag.
+    #
+    #   f.link_to_add("Add Task", :tasks, :enclosing_tag => 'tr')
+    #
+    # You can also pass HTML options in a hash at the end and a block for the content.
     #
     #   <%= f.link_to_add(:tasks, :class => "add_task", :href => new_task_path) do %>
     #     Add Task
@@ -18,12 +23,29 @@ module NestedForm
       options["data-association"] = association
       args << (options.delete(:href) || "javascript:void(0)")
       args << options
+      tag = options[:enclosing_tag].to_s || 'div'
+      tags  = case tag.downcase
+              when 'dd' then [%w[dl]]
+              when 'dt' then [%w[dl]]
+              when 'li' then [%w[ul]]
+              when 'td' then [%w[table], 'tbody', %w[tr]]
+              when 'th' then [%w[table], 'tbody', %w[tr]]
+              when 'tr' then [%w[table], %w[tbody]]
+              else [%w[div]]
+              end
+      tags.first.push :hide
+      tags.last.push :id
       @fields ||= {}
       @template.after_nested_form(association) do
         model_object = object.class.reflect_on_association(association).klass.new
-        output = %Q[<div id="#{association}_fields_blueprint" style="display: none">].html_safe
-        output << fields_for(association, model_object, :child_index => "new_#{association}", &@fields[association])
-        output.safe_concat('</div>')
+        output = tags.map do |tag, *ops|
+          res = "<#{tag}"
+          res << %Q[ style="display: none"] if ops.include? :hide
+          res << %Q[ id="#{association}_fields_blueprint"] if ops.include? :id
+          res << '>'
+        end.join.html_safe
+        output << fields_for(association, model_object, :child_index => "new_#{association}", :enclosing_tag => tag, &@fields[association])
+        output.safe_concat tags.reverse.map{|tag, *ops| "</#{tag}>"}.join
         output
       end
       @template.link_to(*args, &block)
@@ -57,9 +79,10 @@ module NestedForm
     end
 
     def fields_for_nested_model(name, object, options, block)
-      output = '<div class="fields">'.html_safe
+      tag = options[:enclosing_tag].to_s || 'div'
+      output = %Q[<#{tag} class="fields">].html_safe
       output << super
-      output.safe_concat('</div>')
+      output.safe_concat(%Q(</#{tag}>))
       output
     end
   end
