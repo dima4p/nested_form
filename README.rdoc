@@ -76,6 +76,7 @@ It is often desirable to move the nested fields into a partial to keep things or
   <%= f.fields_for :tasks %>
 
 In this case it will look for a partial called "task_fields" and pass the form builder as an +f+ variable to it.
+
 If you want other tag (not <div>) to be used to hold the content of the inserted partial, say, <tr>, use option :enclosing_tag.
 
   <%= f.fields_for :tasks, :enclosing_tag => 'tr' %>
