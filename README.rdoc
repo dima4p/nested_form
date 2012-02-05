@@ -63,7 +63,7 @@ You will then be able to use +link_to_add+ and +link_to_remove+ helper methods o
   <% end %>
   <%= f.link_to_add "Add a task", :tasks %>
 
-NB! Only for jQuery so far.
+NB! The rest of this paragraph is valid only for jQuery so far.
 
 You can wrap +link_to_add+ into one or more tags. In that case the outmost tag should 
 have class 'add_link'
