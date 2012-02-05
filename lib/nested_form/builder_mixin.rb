@@ -23,7 +23,7 @@ module NestedForm
       options["data-association"] = association
       args << (options.delete(:href) || "javascript:void(0)")
       args << options
-      tag = options[:enclosing_tag].to_s || 'div'
+      tag = (options[:enclosing_tag] || 'div').to_s
       tags  = case tag.downcase
               when 'dd' then [%w[dl]]
               when 'dt' then [%w[dl]]

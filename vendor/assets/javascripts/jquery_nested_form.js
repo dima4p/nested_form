@@ -48,7 +48,14 @@ jQuery(function($) {
       return false;
     },
     insertFields: function(content, assoc, link) {
-      return $(content).insertBefore($(link).closest('.add_link'));
+      var place = $(link).closest('.add_link')
+      if (place.length === 0) {
+        place = $(link).closest('form').find('.add_' + assoc + '_link')
+      }
+      if (place.length === 0) {
+        place = link
+      }
+      return $(content).insertBefore(place);
     },
     removeFields: function(e) {
       var link = e.currentTarget;

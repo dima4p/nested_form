@@ -61,7 +61,28 @@ You will then be able to use +link_to_add+ and +link_to_remove+ helper methods o
     <%= task_form.text_field :name %>
     <%= task_form.link_to_remove "Remove this task" %>
   <% end %>
+  <%= f.link_to_add "Add a task", :tasks %>
+
+NB! Only for jQuery so far.
+
+You can wrap +link_to_add+ into one or more tags. In that case the outmost tag should 
+have class 'add_link'
+
+  <%= f.fields_for :tasks do |task_form| %>
+    <%= task_form.text_field :name %>
+    <%= task_form.link_to_remove "Remove this task" %>
+  <% end %>
+  <p class="add_link"><%= f.link_to_add "Add a task", :tasks %></p>
+
+Additinally, you can put +link_to_add+ to any place inside the form. In that case you should place any element with class 'add_association_link' immediately below
++fields_for+
+
   <p><%= f.link_to_add "Add a task", :tasks %></p>
+  <%= f.fields_for :tasks do |task_form| %>
+    <%= task_form.text_field :name %>
+    <%= task_form.link_to_remove "Remove this task" %>
+  <% end %>
+  <div class="add_tasks_link"></div>
 
 
 == SimpleForm and Formtastic Support
